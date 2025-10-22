@@ -8,7 +8,6 @@ class ResetPasswordPage(BasePage):
         return self
 
     def click_toggle_visibility(self):
-        # Иногда клик по кнопке может быть перехвачен, поэтому используем click с фолбэком на JS
         self.click(ResetPasswordLocators.TOGGLE_PASSWORD_VISIBILITY, ensure_clickable=True)
         return self
 

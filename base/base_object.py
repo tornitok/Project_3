@@ -56,7 +56,6 @@ class BaseObject:
         self.wait.until(lambda d: len(d.find_elements(*locator)) >= target)
         return len(self.driver.find_elements(*locator))
 
-    # --- парсинг чисел без условий/исключений ---
     def parse_int_from_text(self, raw: str, default: int = -1) -> int:
         txt = (raw or "").strip()
         digits = ''.join(filter(lambda ch: ch.isdigit(), txt))
@@ -68,7 +67,6 @@ class BaseObject:
     def parse_int_from_optional_element(self, element: WebElement | None, default: int = -1) -> int:
         return self.parse_int_from_text((element and element.text) or '', default)
 
-    # --- низкоуровневые утилиты ---
     def js_click(self, element: WebElement) -> None:
         self.driver.execute_script("arguments[0].click();", element)
 

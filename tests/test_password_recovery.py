@@ -5,9 +5,9 @@ from pages.forgot_password_page import ForgotPasswordPage
 from pages.reset_password_page import ResetPasswordPage
 
 
-@allure.feature("Password Recovery")
+@allure.feature("Восстановление пароля")
 class TestPasswordRecovery:
-    @allure.story("Navigate to Forgot Password from Login")
+    @allure.story("Переход на восстановление пароля со страницы логина")
     def test_open_forgot_password_from_login(self, driver, base_url):
         with allure.step("Открыть главную и перейти к странице логина"):
             home = HomePage(driver).open(base_url)
@@ -17,7 +17,7 @@ class TestPasswordRecovery:
         with allure.step("Проверить, что открылась страница восстановления пароля"):
             assert forgot_page.is_opened(), "Страница восстановления пароля не открылась"
 
-    @allure.story("Submit email on Forgot Password")
+    @allure.story("Отправка email на странице восстановления пароля")
     def test_submit_email_on_forgot_password(self, driver, base_url):
         with allure.step("Открыть страницу восстановления пароля через логин"):
             home = HomePage(driver).open(base_url)
@@ -32,7 +32,7 @@ class TestPasswordRecovery:
         with allure.step("Ждать появления поля для нового пароля"):
             reset_page.wait_loaded()
 
-    @allure.story("Toggle eye icon focuses password field")
+    @allure.story("Клик по иконке глаза переводит фокус на поле пароля")
     def test_toggle_eye_focuses_password_field(self, driver, base_url):
         with allure.step("Дойти до страницы ввода нового пароля"):
             home = HomePage(driver).open(base_url)
@@ -48,4 +48,3 @@ class TestPasswordRecovery:
             reset_page.click_toggle_visibility()
         with allure.step("Проверить, что поле пароля в фокусе"):
             assert reset_page.is_password_input_focused(), "Поле пароля не стало активным после клика по иконке"
-

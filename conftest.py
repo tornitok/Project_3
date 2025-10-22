@@ -9,6 +9,14 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from config import URL
 
+from time import sleep
+import uuid
+from typing import Generator
+from api.client import ApiClient, TestUser
+from pages.home_page import HomePage
+from pages.login_page import LoginPage
+from pages.constructor_page import ConstructorPage
+
 
 @pytest.fixture
 def base_url() -> str:
@@ -47,6 +55,46 @@ def driver(request):
     drv.quit()
 
 
+@pytest.fixture
+def api(base_url) -> ApiClient:
+    return ApiClient(base_url)
+
+
+@pytest.fixture
+def test_user(api: ApiClient) -> Generator[TestUser, None, None]:
+    email = f"auto_{uuid.uuid4().hex[:8]}@example.com"
+    password = "P@ssw0rd!123"
+    name = "AutoUser"
+    user = TestUser(email=email, password=password, name=name)
+    user = api.create_user(user)
+    try:
+        yield user
+    finally:
+        if getattr(user, "access_token", None):
+            api.delete_user(user.access_token)
+
+
+@pytest.fixture
+def create_simple_order(driver, base_url):
+    def _create(user: TestUser) -> int:
+        with allure.step("Авторизоваться и создать простой заказ"):
+            home = HomePage(driver).open(base_url)
+            login: LoginPage = home.go_to_login()
+            login.login(user.email, user.password)
+            constructor: ConstructorPage = home.go_to_constructor()
+            constructor.wait_loaded()
+            bun = constructor.get_first_bun_card()
+            filling = constructor.get_first_filling_card()
+            constructor.add_card_to_constructor(bun)
+            constructor.add_card_to_constructor(filling)
+            constructor.click_make_order().wait_order_modal()
+            sleep(5)
+            order_number = constructor.get_order_number_from_modal()
+            constructor.close_order_modal()
+            return order_number
+    return _create
+
+
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
@@ -55,8 +103,8 @@ def pytest_runtest_makereport(item, call):
 
     should_attach = int((rep.when == "call") and rep.failed and (driver is not None))
     data = [
-        ("screenshot", lambda d: d.get_screenshot_as_png(), allure.attachment_type.PNG),
-        ("page_source", lambda d: d.page_source, allure.attachment_type.HTML),
+        ("скриншот", lambda d: d.get_screenshot_as_png(), allure.attachment_type.PNG),
+        ("html страницы", lambda d: d.page_source, allure.attachment_type.HTML),
     ] * should_attach
 
     for name, getter, att_type in data:

@@ -48,7 +48,6 @@ class FeedPage(BasePage):
         self.wait.until(lambda d: self.get_done_today() >= value)
         return self
 
-    # --- order numbers lists ---
     def list_feed_order_numbers(self) -> set[int]:
         cards = self.driver.find_elements(*FeedLocators.ORDER_CARD)
         numbers = [

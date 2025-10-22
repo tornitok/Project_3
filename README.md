@@ -1,13 +1,13 @@
-# Stellar Burgers: E2E tests
+# Stellar Burgers: E2E-тесты
 
-What is included:
-- Page Object Model under `pages/` with a base object in `base/`
-- Locators grouped under `locators/`
-- Cross-browser pytest fixture (Chrome + Firefox) in `conftest.py`
-- Allure reporting via `allure-pytest`
-- Tests grouped by feature under `tests/`
+Что включено:
+- Page Object Model в каталоге `pages/` с базовым объектом в `base/`
+- Локаторы сгруппированы в `locators/`
+- Кросс-браузерный фикстур pytest (Chrome и Firefox) в `conftest.py`
+- Отчёты Allure через `allure-pytest`
+- Тесты сгруппированы по функциональности в `tests/`
 
-## Setup
+## Установка
 
 ```bash
 python3 -m venv .venv
@@ -15,21 +15,21 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Run tests (Chrome + Firefox)
+## Запуск тестов (Chrome и Firefox)
 
-Browsers run headless by default in the fixture.
+Браузеры запускаются в headless-режиме по умолчанию в фикстуре.
 
 ```bash
 pytest -v --alluredir=allure-results
 ```
 
-## Open Allure report
+## Открыть отчёт Allure
 
 ```bash
 allure serve allure-results
 ```
 
-Notes:
-- Test users are created and removed via API fixtures.
-- All elements used in tests are described in Page Objects and Locators.
-- Tests are independent and suitable for parallel execution.
+Примечания:
+- Тестовые пользователи создаются и удаляются через API-фикстуры.
+- Все элементы, используемые в тестах, описаны в Page Object'ах и локаторах.
+- Тесты независимы и подходят для параллельного выполнения.
