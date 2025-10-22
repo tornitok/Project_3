@@ -22,9 +22,11 @@ class ForgotPasswordLocators:
 
 class ResetPasswordLocators:
     # Поле ввода нового пароля (первое поле с типом password)
-    PASSWORD_INPUT = (By.XPATH, "//label[normalize-space(text())='Пароль']/following-sibling::input[@type='password']")
-    # Кнопка/иконка показать/скрыть пароль рядом с полем пароля
+    PASSWORD_INPUT = (
+        By.XPATH,
+        "//div[contains(@class, 'input_type_password')]//input[@type='password' or @type='text']"
+    )
     TOGGLE_PASSWORD_VISIBILITY = (
         By.XPATH,
-        "(//input[@type='password' or @type='text']/following-sibling::*[contains(@class,'icon') or self::button or self::span])[1]"
+        "//div[contains(@class, 'input_type_text') or contains(@class, 'input_type_password')]"
     )

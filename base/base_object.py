@@ -73,7 +73,11 @@ class BaseObject:
         self.driver.execute_script("arguments[0].click();", element)
 
     def is_element_focused(self, element: WebElement) -> bool:
-        return bool(self.driver.execute_script("return document.activeElement === arguments[0];", element))
+        return self.driver.execute_script("""
+            const el = arguments[0];
+            const active = document.activeElement;
+            return el === active || active.contains(el) || el.contains(active);
+        """, element)
 
     def drag_and_drop_html5(self, source: WebElement, target: WebElement) -> None:
         js = """

@@ -13,7 +13,6 @@ class ResetPasswordPage(BasePage):
         return self
 
     def is_password_input_focused(self) -> bool:
-        # Проверяем, что поле пароля в фокусе
-        element = self._is_present(ResetPasswordLocators.PASSWORD_INPUT)
-        return self.is_element_focused(element)
-
+        element = self._is_present(ResetPasswordLocators.TOGGLE_PASSWORD_VISIBILITY)
+        classes = element.get_attribute("class") or ""
+        return "input_status_active" in classes

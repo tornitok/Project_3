@@ -15,9 +15,9 @@ class AccountLocators:
     # История заказов - элементы списка и номера
     HISTORY_ORDER_CARD = (
         By.XPATH,
-        "//li[.//a[contains(@href,'/profile/orders') or contains(@href,'/account/order')]] | //a[contains(@href,'/profile/orders') or contains(@href,'/account/order')]/ancestor::*[self::li or self::div][1]"
+        "//ul[contains(@class, 'OrderHistory_profileList')]//li[contains(@class, 'OrderHistory_listItem')]"
     )
     HISTORY_ORDER_NUMBER_REL = (
         By.XPATH,
-        ".//*[contains(@class,'digits') or contains(@class,'number') or starts-with(normalize-space(.), '#')][normalize-space()][1]"
+        ".//p[@class='text text_type_digits-default' and starts-with(normalize-space(text()), '#')]"
     )

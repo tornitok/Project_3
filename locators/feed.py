@@ -10,12 +10,12 @@ class FeedLocators:
     # Карточки заказов в ленте
     ORDER_CARD = (
         By.XPATH,
-        "//li[.//a[contains(@href,'/feed/')]] | //a[contains(@href,'/feed/')]/ancestor::*[self::li or self::div][1]"
+        "//li[contains(@class, 'OrderHistory_listItem')]"
     )
-    ORDER_CARD_LINK_REL = (By.XPATH, ".//a[contains(@href,'/feed/')]")
+    ORDER_CARD_LINK_REL = (By.XPATH, ".//p[contains(@class, 'text_type_digits-default')]")
     ORDER_CARD_NUMBER_REL = (
         By.XPATH,
-        ".//*[contains(@class,'digits') or contains(@class,'number') or starts-with(normalize-space(.), '#')][normalize-space()][1]"
+        "//p[@class='text text_type_digits-default' and contains(text(), '#')]"
     )
 
     # Счётчики "Выполнено за всё время" и "Выполнено за сегодня"
@@ -31,7 +31,7 @@ class FeedLocators:
     # Раздел "В работе" (номера заказов в работе)
     IN_PROGRESS_NUMBERS = (
         By.XPATH,
-        "//*[.//*[normalize-space(.)='В работе'] or .//h3[contains(normalize-space(.),'В работе')]]//*[contains(@class,'digits') or contains(@class,'number') or self::li or self::p][normalize-space()]"
+        "//p[contains(text(), 'В работе')]/following-sibling::ul/li[contains(@class, 'text_type_digits-default')]"
     )
 
     # Модалка деталей заказа после клика по карточке (общее модальное окно)

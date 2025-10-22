@@ -1,4 +1,6 @@
 import uuid
+from time import sleep
+
 import allure
 import pytest
 
@@ -49,6 +51,7 @@ class TestFeed:
         constructor.add_card_to_constructor(bun)
         constructor.add_card_to_constructor(filling)
         constructor.click_make_order().wait_order_modal()
+        sleep(5) # wait for order to be ready
         order_number = constructor.get_order_number_from_modal()
         constructor.close_order_modal()
         return order_number
@@ -62,11 +65,13 @@ class TestFeed:
             home = HomePage(driver)
             profile: ProfilePage = home.go_to_account()
             profile.wait_loaded().go_to_orders_history()
+            sleep(3)
             history_numbers = profile.list_history_order_numbers()
             assert order_number in history_numbers or len(history_numbers) > 0, "В истории не найден созданный заказ"
         with allure.step("Открыть Ленту заказов и дождаться появления номера из истории"):
             feed: FeedPage = home.go_to_feed()
-            feed.wait_loaded().wait_for_order_in_feed(order_number, timeout_seconds=60)
+            print(f"ORDER {order_number}")
+            feed.wait_loaded().wait_for_order_in_feed(order_number, timeout_seconds=10)
             assert order_number in feed.list_feed_order_numbers(), "Номер из истории не отображается в Ленте"
 
     @allure.story("Done all time counter increases after new order")
@@ -111,7 +116,7 @@ class TestFeed:
         with allure.step("Открыть Ленту и дождаться появления номера в 'В работе'"):
             home = HomePage(driver)
             feed: FeedPage = home.go_to_feed()
-            feed.wait_loaded().wait_for_order_in_progress(order_number, timeout_seconds=60)
+            print(f"ORDER {order_number}")
+            feed.wait_loaded().wait_for_order_in_progress(order_number, timeout_seconds=10)
             in_progress = feed.list_in_progress_numbers()
             assert order_number in in_progress, "Новый заказ не появился в разделе 'В работе'"
-

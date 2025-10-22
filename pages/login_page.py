@@ -18,6 +18,7 @@ class LoginPage(BasePage):
 
     def submit(self):
         self.click(LoginLocators.SUBMIT_BUTTON)
+        self._is_not_visible(LoginLocators.SUBMIT_BUTTON)
         return self
 
     def login(self, email: str, password: str):

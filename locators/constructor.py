@@ -60,6 +60,9 @@ class ConstructorLocators:
         "(//section[contains(@class,'Modal')]//*[self::button or self::svg or self::div][contains(@class,'close') or @aria-label='close' or @data-test='modal-close'] | //div[contains(@class,'Modal_overlay') or contains(@class,'modal_overlay')])[1]"
     )
 
+    # Контейнер любой модалки
+    MODAL_ANY = (By.XPATH, "//section[contains(@class,'Modal')]")
+
     # Модалка заказа (успех)
     ORDER_MODAL = (By.XPATH, "//section[contains(@class,'Modal')]//*[contains(normalize-space(.),'идентификатор заказа') or contains(normalize-space(.),'номер заказа') or contains(@class,'order')]")
     # Номер заказа внутри модалки
