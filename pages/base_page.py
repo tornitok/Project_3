@@ -6,5 +6,5 @@ class BasePage(BaseObject):
         base = base_url.rstrip('/')
         tail = path.lstrip('/')
         url = base + '/' + tail
-        self.driver.get(url)
+        self.open_url(url)
         return self

@@ -1,6 +1,5 @@
 from .base_page import BasePage
 from locators.feed import FeedLocators
-from selenium.webdriver.support.ui import WebDriverWait
 
 
 class FeedPage(BasePage):
@@ -9,16 +8,15 @@ class FeedPage(BasePage):
         return self
 
     def is_opened(self) -> bool:
-        url_ok = "feed" in self.driver.current_url
-        title_present = len(self.driver.find_elements(*FeedLocators.TITLE)) > 0
+        url_ok = "feed" in self.current_url()
+        title_present = self.has_any(FeedLocators.TITLE)
         return url_ok or title_present
 
-    # --- modal with order details ---
     def open_first_order_details(self):
         card = self._is_visible(FeedLocators.ORDER_CARD)
         links = card.find_elements(*FeedLocators.ORDER_CARD_LINK_REL)
         target = (links or [card])[0]
-        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", target)
+        self.scroll_into_view(target, block='center')
         self.js_click(target)
         self._is_present(FeedLocators.ORDER_DETAILS_MODAL)
         return self
@@ -29,7 +27,7 @@ class FeedPage(BasePage):
         return self
 
     def is_details_modal_opened(self) -> bool:
-        return len(self.driver.find_elements(*FeedLocators.ORDER_DETAILS_MODAL)) > 0
+        return self.has_any(FeedLocators.ORDER_DETAILS_MODAL)
 
     # --- counters helpers ---
     def get_done_all_time(self) -> int:
@@ -49,7 +47,7 @@ class FeedPage(BasePage):
         return self
 
     def list_feed_order_numbers(self) -> set[int]:
-        cards = self.driver.find_elements(*FeedLocators.ORDER_CARD)
+        cards = self.find_elements(FeedLocators.ORDER_CARD)
         numbers = [
             self.parse_int_from_optional_element((c.find_elements(*FeedLocators.ORDER_CARD_NUMBER_REL) or [None])[0], default=-1)
             for c in cards
@@ -57,14 +55,14 @@ class FeedPage(BasePage):
         return set(filter(lambda x: x > 0, numbers))
 
     def list_in_progress_numbers(self) -> set[int]:
-        els = self.driver.find_elements(*FeedLocators.IN_PROGRESS_NUMBERS)
+        els = self.find_elements(FeedLocators.IN_PROGRESS_NUMBERS)
         numbers = [self.parse_int_from_element(el, default=-1) for el in els]
         return set(filter(lambda x: x > 0, numbers))
 
     def wait_for_order_in_feed(self, order_number: int, timeout_seconds: int = 30):
-        WebDriverWait(self.driver, timeout_seconds).until(lambda d: order_number in self.list_feed_order_numbers())
+        self.wait_until(lambda d: order_number in self.list_feed_order_numbers(), timeout_seconds)
         return self
 
     def wait_for_order_in_progress(self, order_number: int, timeout_seconds: int = 30):
-        WebDriverWait(self.driver, timeout_seconds).until(lambda d: order_number in self.list_in_progress_numbers())
+        self.wait_until(lambda d: order_number in self.list_in_progress_numbers(), timeout_seconds)
         return self

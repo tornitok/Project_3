@@ -1,13 +1,11 @@
 from .base_page import BasePage
 from locators.auth import ForgotPasswordLocators
-from .reset_password_page import ResetPasswordPage
 
 
 class ForgotPasswordPage(BasePage):
     """Страница восстановления пароля.
 
-    Методы оставлены совместимыми с текущими тестами, но добавлен синоним
-    click_button() по аналогии с приведённым примером.
+    Методы возвращают текущую страницу; создание других страниц выполняется в тестах.
     """
 
     def __init__(self, driver):
@@ -15,18 +13,18 @@ class ForgotPasswordPage(BasePage):
 
     def is_opened(self) -> bool:
         """Проверяет, что открыта страница восстановления пароля."""
-        return "forgot" in self.driver.current_url
+        return "forgot" in self.current_url()
 
     def enter_email(self, email: str) -> "ForgotPasswordPage":
         """Вводит email в поле на странице восстановления."""
         self.send_keys(ForgotPasswordLocators.EMAIL_INPUT, email)
         return self
 
-    def submit_restore(self) -> ResetPasswordPage:
-        """Нажимает кнопку 'Восстановить' и ожидает перехода к вводу нового пароля."""
+    def submit_restore(self) -> "ForgotPasswordPage":
+        """Нажимает кнопку 'Восстановить' (переход на следующую страницу проверяется в тестах)."""
         self.click(ForgotPasswordLocators.RESTORE_BUTTON)
-        return ResetPasswordPage(self.driver)
+        return self
 
     # Синоним по стилю примера: click_button -> submit_restore
-    def click_button(self) -> ResetPasswordPage:
+    def click_button(self) -> "ForgotPasswordPage":
         return self.submit_restore()

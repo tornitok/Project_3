@@ -3,11 +3,13 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 import urllib.parse
+from typing import Callable
 
 
 class BaseObject:
     def __init__(self, driver: WebDriver, timeout: int = 10):
         self.driver = driver
+        self.timeout = timeout
         self.wait = WebDriverWait(driver, timeout)
 
     # --- ожидания ---
@@ -31,6 +33,31 @@ class BaseObject:
 
     def wait_url_contains_any(self, parts: tuple[str, ...] | list[str]) -> bool:
         return self.wait.until(lambda d: any(p in d.current_url for p in parts))
+
+    # --- низкоуровневые обёртки над WebDriver ---
+    def open_url(self, url: str):
+        self.driver.get(url)
+        return self
+
+    def current_url(self) -> str:
+        """Текущий URL без ожиданий, с декодированием."""
+        return urllib.parse.unquote(self.driver.current_url)
+
+    def find_element(self, locator: tuple[str, str]) -> WebElement:
+        return self.driver.find_element(*locator)
+
+    def find_elements(self, locator: tuple[str, str]) -> list[WebElement]:
+        return self.driver.find_elements(*locator)
+
+    def has_any(self, locator: tuple[str, str]) -> bool:
+        return len(self.find_elements(locator)) > 0
+
+    def scroll_into_view(self, element: WebElement, block: str = 'center') -> None:
+        self.driver.execute_script("arguments[0].scrollIntoView({block: arguments[1]});", element, block)
+
+    def wait_until(self, predicate: Callable[[WebDriver], bool], timeout_seconds: int | None = None):
+        WebDriverWait(self.driver, timeout_seconds or self.timeout).until(predicate)
+        return self
 
     # --- действия ---
     def click(self, locator: tuple[str, str], ensure_clickable: bool = True) -> None:
@@ -59,7 +86,9 @@ class BaseObject:
     def parse_int_from_text(self, raw: str, default: int = -1) -> int:
         txt = (raw or "").strip()
         digits = ''.join(filter(lambda ch: ch.isdigit(), txt))
-        return (digits and int(digits)) or default
+        if digits:
+            return int(digits)
+        return default
 
     def parse_int_from_element(self, element: WebElement, default: int = -1) -> int:
         return self.parse_int_from_text(getattr(element, 'text', '') or '', default)

@@ -15,17 +15,19 @@ class TestAccount:
         with allure.step("Кликнуть по ссылке 'Личный кабинет' в шапке"):
             home.go_to_account()
         with allure.step("Ожидать, что открылась страница логина"):
-            assert "login" in driver.current_url.lower()
+            assert LoginPage(driver).is_open()
 
     @allure.story("Открытие истории заказов в Личном кабинете")
     def test_open_orders_history(self, driver, base_url, test_user: TestUser):
         with allure.step("Открыть главную и перейти на страницу логина"):
             home = HomePage(driver).open(base_url)
-            login: LoginPage = home.go_to_login()
+            home.go_to_login()
+            login = LoginPage(driver)
         with allure.step("Авторизоваться под тестовым пользователем"):
             login.login(test_user.email, test_user.password)
         with allure.step("Перейти в 'Личный кабинет'"):
-            profile: ProfilePage = home.go_to_account()
+            home.go_to_account()
+            profile = ProfilePage(driver)
             profile.wait_loaded()
         with allure.step("Открыть вкладку 'История заказов'"):
             profile.go_to_orders_history()
@@ -36,11 +38,13 @@ class TestAccount:
     def test_logout_from_account(self, driver, base_url, test_user: TestUser):
         with allure.step("Авторизоваться"):
             home = HomePage(driver).open(base_url)
-            login: LoginPage = home.go_to_login()
+            home.go_to_login()
+            login = LoginPage(driver)
             login.login(test_user.email, test_user.password)
         with allure.step("Открыть 'Личный кабинет' и выйти"):
-            profile: ProfilePage = home.go_to_account()
+            home.go_to_account()
+            profile = ProfilePage(driver)
             profile.wait_loaded()
             profile.logout()
         with allure.step("Проверить, что произошёл выход"):
-            assert "login" in driver.current_url.lower(), "После выхода не открылась страница логина"
+            assert LoginPage(driver).is_open(), "После выхода не открылась страница логина"
