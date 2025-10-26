@@ -11,11 +11,6 @@ from pages.constructor_page import ConstructorPage
 from drivers.browser_factory import BROWSER_FACTORY
 
 
-@pytest.fixture
-def base_url() -> str:
-    return URL.BASE_URL
-
-
 @pytest.fixture(params=["chrome", "firefox"])
 def driver(request):
     create = BROWSER_FACTORY[request.param]
@@ -26,8 +21,8 @@ def driver(request):
 
 
 @pytest.fixture
-def api(base_url) -> ApiClient:
-    return ApiClient(base_url)
+def api() -> ApiClient:
+    return ApiClient(URL.BASE_URL)
 
 
 @pytest.fixture
@@ -45,10 +40,10 @@ def test_user(api: ApiClient) -> Generator[TestUser, None, None]:
 
 
 @pytest.fixture
-def create_simple_order(driver, base_url):
+def create_simple_order(driver):
     def _create(user: TestUser) -> int:
         with allure.step("Авторизоваться и создать простой заказ"):
-            home = HomePage(driver).open(base_url)
+            home = HomePage(driver).open(URL.BASE_URL)
             home.go_to_login()
             login = LoginPage(driver)
             login.login(user.email, user.password)

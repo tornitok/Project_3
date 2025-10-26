@@ -1,6 +1,6 @@
 import allure
-import time
 
+from config import URL
 from api.client import TestUser
 from pages.home_page import HomePage
 from pages.feed_page import FeedPage
@@ -10,9 +10,9 @@ from pages.profile_page import ProfilePage
 @allure.feature("Лента заказов")
 class TestFeed:
     @allure.story("Клик по заказу открывает модальное окно деталей")
-    def test_feed_open_order_details(self, driver, base_url):
+    def test_feed_open_order_details(self, driver):
         with allure.step("Открыть ленту заказов"):
-            home = HomePage(driver).open(base_url)
+            home = HomePage(driver).open(URL.BASE_URL)
             home.go_to_feed()
             feed = FeedPage(driver)
             feed.wait_loaded()
@@ -23,7 +23,7 @@ class TestFeed:
             feed.close_modal()
 
     @allure.story("Заказы из истории пользователя отображаются в Ленте")
-    def test_user_history_orders_visible_in_feed(self, driver, base_url, test_user: TestUser, create_simple_order):
+    def test_user_history_orders_visible_in_feed(self, driver, test_user: TestUser, create_simple_order):
         with allure.step("Создать заказ под тестовым пользователем"):
             order_number = create_simple_order(test_user)
             assert order_number > 0, "Не удалось получить номер созданного заказа"
@@ -41,9 +41,9 @@ class TestFeed:
             assert order_number in feed.list_feed_order_numbers(), "Номер из истории не отображается в Ленте"
 
     @allure.story("Счётчик 'Выполнено за всё время' увеличивается после нового заказа")
-    def test_done_all_time_increments_after_order(self, driver, base_url, test_user: TestUser, create_simple_order):
+    def test_done_all_time_increments_after_order(self, driver, test_user: TestUser, create_simple_order):
         with allure.step("Открыть Ленту и запомнить значение счётчика 'Выполнено за всё время'"):
-            home = HomePage(driver).open(base_url)
+            home = HomePage(driver).open(URL.BASE_URL)
             home.go_to_feed()
             feed = FeedPage(driver)
             feed.wait_loaded()
@@ -60,9 +60,9 @@ class TestFeed:
             assert after >= before + 1, f"Счётчик не увеличился: было {before}, стало {after}"
 
     @allure.story("Счётчик 'Выполнено за сегодня' увеличивается после нового заказа")
-    def test_done_today_increments_after_order(self, driver, base_url, test_user: TestUser, create_simple_order):
+    def test_done_today_increments_after_order(self, driver, test_user: TestUser, create_simple_order):
         with allure.step("Открыть Ленту и запомнить значение счётчика 'Выполнено за сегодня'"):
-            home = HomePage(driver).open(base_url)
+            home = HomePage(driver).open(URL.BASE_URL)
             home.go_to_feed()
             feed = FeedPage(driver)
             feed.wait_loaded()
@@ -79,7 +79,7 @@ class TestFeed:
             assert after >= before + 1, f"Счётчик не увеличился: было {before}, стало {after}"
 
     @allure.story("После создания заказа его номер появляется в разделе 'В работе'")
-    def test_new_order_appears_in_in_progress(self, driver, base_url, test_user: TestUser, create_simple_order):
+    def test_new_order_appears_in_in_progress(self, driver, test_user: TestUser, create_simple_order):
         with allure.step("Создать заказ под тестовым пользователем"):
             order_number = create_simple_order(test_user)
             assert order_number > 0
