@@ -8,7 +8,7 @@ from pages.reset_password_page import ResetPasswordPage
 
 @allure.feature("Восстановление пароля")
 class TestPasswordRecovery:
-    @allure.story("Переход на восстановление пароля со страницы логина")
+    @allure.title("Переход на восстановление пароля со страницы логина")
     def test_open_forgot_password_from_login(self, driver):
         with allure.step("Открыть главную и перейти к странице логина"):
             home = HomePage(driver).open(URL.BASE_URL)
@@ -20,7 +20,7 @@ class TestPasswordRecovery:
         with allure.step("Проверить, что открылась страница восстановления пароля"):
             assert forgot_page.is_opened(), "Страница восстановления пароля не открылась"
 
-    @allure.story("Отправка email на странице восстановления пароля")
+    @allure.title("Отправка email на странице восстановления пароля")
     def test_submit_email_on_forgot_password(self, driver):
         with allure.step("Открыть страницу восстановления пароля через логин"):
             home = HomePage(driver).open(URL.BASE_URL)
@@ -34,7 +34,7 @@ class TestPasswordRecovery:
         with allure.step("Ждать появления поля для нового пароля"):
             reset_page.wait_loaded()
 
-    @allure.story("Клик по иконке глаза переводит фокус на поле пароля")
+    @allure.title("Клик по иконке глаза переводит фокус на поле пароля")
     def test_toggle_eye_focuses_password_field(self, driver):
         with allure.step("Дойти до страницы ввода нового пароля"):
             home = HomePage(driver).open(URL.BASE_URL)

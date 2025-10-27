@@ -9,6 +9,7 @@ from pages.profile_page import ProfilePage
 
 @allure.feature("Личный кабинет")
 class TestAccount:
+    @allure.title("Открытие 'Личный кабинет' без авторизации перенаправляет на логин")
     @allure.story("Переход в Личный кабинет открывает логин без авторизации")
     def test_open_account_redirects_to_login_when_unauthorized(self, driver):
         with allure.step("Открыть главную страницу"):
@@ -18,6 +19,7 @@ class TestAccount:
         with allure.step("Ожидать, что открылась страница логина"):
             assert LoginPage(driver).is_open()
 
+    @allure.title("Открытие раздела 'История заказов' в личном кабинете")
     @allure.story("Открытие истории заказов в Личном кабинете")
     def test_open_orders_history(self, driver, test_user: TestUser):
         with allure.step("Открыть главную и перейти на страницу логина"):
@@ -35,6 +37,7 @@ class TestAccount:
         with allure.step("Проверить, что вкладка истории открыта"):
             assert profile.is_on_orders_history(), "Не удалось перейти в раздел 'История заказов'"
 
+    @allure.title("Выход из аккаунта из личного кабинета")
     @allure.story("Выход из аккаунта")
     def test_logout_from_account(self, driver, test_user: TestUser):
         with allure.step("Авторизоваться"):

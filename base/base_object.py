@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 import urllib.parse
 from typing import Callable
+import allure
 
 
 class BaseObject:
@@ -12,7 +13,6 @@ class BaseObject:
         self.timeout = timeout
         self.wait = WebDriverWait(driver, timeout)
 
-    # --- ожидания ---
     def _is_visible(self, locator: tuple[str, str]) -> WebElement:
         return self.wait.until(ec.visibility_of_element_located(locator))
 
@@ -35,6 +35,7 @@ class BaseObject:
         return self.wait.until(lambda d: any(p in d.current_url for p in parts))
 
     # --- низкоуровневые обёртки над WebDriver ---
+    @allure.step("Открыть URL: {url}")
     def open_url(self, url: str):
         self.driver.get(url)
         return self
@@ -52,6 +53,7 @@ class BaseObject:
     def has_any(self, locator: tuple[str, str]) -> bool:
         return len(self.find_elements(locator)) > 0
 
+    @allure.step("Прокрутить элемент в область видимости")
     def scroll_into_view(self, element: WebElement, block: str = 'center') -> None:
         self.driver.execute_script("arguments[0].scrollIntoView({block: arguments[1]});", element, block)
 
@@ -59,12 +61,13 @@ class BaseObject:
         WebDriverWait(self.driver, timeout_seconds or self.timeout).until(predicate)
         return self
 
-    # --- действия ---
+    @allure.step("Клик по элементу: {locator}")
     def click(self, locator: tuple[str, str], ensure_clickable: bool = True) -> None:
         pick = (self._is_present, self._is_clickable)
         element = pick[int(bool(ensure_clickable))](locator)
         self.js_click(element)
 
+    @allure.step("Ввод текста в поле: {locator}")
     def send_keys(self, locator: tuple[str, str], value: str, ensure_visible: bool = True) -> None:
         pick = (self._is_present, self._is_visible)
         element = pick[int(bool(ensure_visible))](locator)
@@ -96,6 +99,7 @@ class BaseObject:
     def parse_int_from_optional_element(self, element: WebElement | None, default: int = -1) -> int:
         return self.parse_int_from_text((element and element.text) or '', default)
 
+    @allure.step("Клик по элементу через JS")
     def js_click(self, element: WebElement) -> None:
         self.driver.execute_script("arguments[0].click();", element)
 
@@ -106,6 +110,7 @@ class BaseObject:
             return el === active || active.contains(el) || el.contains(active);
         """, element)
 
+    @allure.step("Перетащить элемент в цель (HTML5 DnD)")
     def drag_and_drop_html5(self, source: WebElement, target: WebElement) -> None:
         js = """
         const src = arguments[0];

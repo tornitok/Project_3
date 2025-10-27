@@ -2,9 +2,6 @@ from selenium.webdriver.common.by import By
 
 
 class AccountLocators:
-    # Ссылка в шапке "Личный кабинет"
-    ACCOUNT_LINK = (By.XPATH, "//a[contains(@href, '/account') and .//p[contains(text(), 'Личный Кабинет')]]")
-
     # Вкладки в личном кабинете
     PROFILE_TAB = (By.XPATH, "//a[.//p[normalize-space(.)='Профиль'] or normalize-space(.)='Профиль']")
     HISTORY_TAB = (By.XPATH, "//a[.//p[normalize-space(.)='История заказов'] or normalize-space(.)='История заказов']")

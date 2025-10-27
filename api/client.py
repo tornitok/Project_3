@@ -1,6 +1,7 @@
 import requests
 from dataclasses import dataclass
 from urllib.parse import urljoin
+import allure
 
 
 @dataclass
@@ -17,6 +18,7 @@ class ApiClient:
         self.base_url = base_url.rstrip('/') + '/'
         self.api_base = urljoin(self.base_url, 'api/')
 
+    @allure.step("Создать пользователя через API")
     def create_user(self, user: TestUser) -> TestUser:
         url = urljoin(self.api_base, 'auth/register')
         payload = {"email": user.email, "password": user.password, "name": user.name}
@@ -29,6 +31,7 @@ class ApiClient:
         user.access_token = token or None
         return user
 
+    @allure.step("Удалить пользователя через API по токену")
     def delete_user(self, access_token: str | None) -> None:
         url = urljoin(self.api_base, 'auth/user')
         token = access_token or ''
